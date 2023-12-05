@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Logging Service</title>
+    <!-- Use the Play CDN to try Tailwind right in the browser without any build step. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .error-log { color: theme('colors.red.400'); }
+            .info-log { color: theme('colors.sky.400'); }
+        }
+    </style>
+</head>
+<body>
+    <main class="p-12">
+        <div class="max-w-xl mx-auto space-y-6 text-slate-900">
+            <h2 class="text-2xl">Logging service</h2>
+            <p class="!mt-0 text-slate-600">Lorem ipsum dolor sim amet</p>
+            <div id="console" class="p-4 font-mono bg-slate-800 rounded ring-4 ring-slate-800/10 text-slate-300 leading-none space-y-1 max-h-[400px] overflow-auto"></div>
+        </div>
+    </main>
+    <script type="module">
+        import {
+            BaseFormatter,
+            HtmlElementLog,
+            LogNow,
+            CollectLogsAndFlushAfterATimeout,
+            CompositeLogService,
+            LogService,
+            ConsoleLog
+        } from "./assets/index.esm.js";
+
+        const formatter = new BaseFormatter();
+        const service = new CompositeLogService([
+            new LogService(new LogNow(new HtmlElementLog(formatter, 'console'))),
+            new LogService(new CollectLogsAndFlushAfterATimeout(new ConsoleLog(formatter), 0))
+        ]);
+
+        [...Array(120).keys()].forEach((index) => {
+            setTimeout(() => service.error(`Message error #${index}`), Math.floor(index * Math.random()) * index)
+        });
+
+        [...Array(120).keys()].forEach((index) => {
+            setTimeout(() => service.info(`Message info #${index}`), Math.floor(index * Math.random()) * index)
+        })
+    </script>
+</body>
+</html>
