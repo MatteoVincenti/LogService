@@ -85,7 +85,7 @@ Here's an example of how to use the library with randomized providers and strate
     })
 </script>
 ```
-Ypu can also register global event listener.
+You can also register global event listener.
 
 ```html
 <script>
